@@ -1,0 +1,22 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4>{{ contact.name }}</h4>
+    <div class="row">
+      <!-- Image with Left Padding -->
+      <span class="pull-left" style="padding-left: 15px;">
+        <img src="{{ contact.imageUrl }}" alt="{{ contact.name }}" class="img-responsive" style="max-height: 100px;" />
+      </span>
+
+      <!-- Buttons with Right Padding -->
+      <span class="pull-right btn-toolbar" style="margin-top: 35px; padding-right: 15px;">
+        <a class="btn btn-primary">Edit</a>
+        <a class="btn btn-danger">Delete</a>
+      </span>
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <p><strong>Email:</strong> <span>{{ contact.email }}</span></p>
+    <p><strong>Phone:</strong> <span>{{ contact.phone }}</span></p>
+  </div>
+</div>
