@@ -6,9 +6,8 @@
     </div>
   </div>
   <div class="panel-body">
-    <div class="center-panel">
-      <!--Add tag to display a list of DocumentItem components-->
-      <app-document-item></app-document-item>
+    <div class="center-panel" *ngFor="let document of documents" (click)="onSelectedDocument(document)">
+      <app-document-item [document]="document"></app-document-item>
     </div>
   </div>
 
