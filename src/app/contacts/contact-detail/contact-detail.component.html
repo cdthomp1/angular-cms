@@ -1,10 +1,11 @@
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h4>{{ contact.name }}</h4>
+    <h4>{{ contact?.name }}</h4>
     <div class="row">
       <!-- Image with Left Padding -->
       <span class="pull-left" style="padding-left: 15px;">
-        <img src="{{ contact.imageUrl }}" alt="{{ contact.name }}" class="img-responsive" style="max-height: 100px;" />
+        <img *ngIf="contact.imageUrl" [src]="contact.imageUrl" alt="{{ contact?.name }}" class="img-responsive"
+          style="max-height: 100px;" />
       </span>
 
       <!-- Buttons with Right Padding -->

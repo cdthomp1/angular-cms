@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Contact } from '../models/contact.model';
+import { ContactsService } from './services/contacts.service';
 
 @Component({
   selector: 'app-contacts',
@@ -7,39 +8,17 @@ import { Contact } from '../models/contact.model';
   styleUrl: './contacts.component.css'
 })
 export class ContactsComponent implements OnInit {
-  public contacts: Contact[];
+
   public selectedContactId: string;
   public selectedContact: Contact;
 
+  constructor(private contactsService: ContactsService) { }
+
   ngOnInit() {
-    this.contacts = [
-      new Contact(
-        "1",
-        "R. Kent Jackson",
-        "jacksonk@byui.edu",
-        "208-496-3771",
-        "images/jacksonk.jpg",
-        []
-      ),
-      new Contact(
-        "2",
-        "Rex Barzee",
-        "barzeer@byui.edu",
-        "208-496-3768",
-        "images/barzeer.jpg",
-        []
-      )
-    ]
+    this.contactsService.contactSelectedEvent.subscribe((contact: Contact) => {
+      this.selectedContact = contact;
+    });
   }
 
-  public setSelectedContactId($event) {
-    console.log($event)
-    this.selectedContactId = $event;
-    this.setSelectedContact();
-  }
-
-  private setSelectedContact() {
-    this.selectedContact = this.contacts.find(c => c.id === this.selectedContactId);
-  }
 }
 

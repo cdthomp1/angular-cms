@@ -1,5 +1,6 @@
 import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { Message } from '../../models/message.model';
+import { MessageService } from '../services/message.service';
 
 @Component({
   selector: 'app-message-edit',
@@ -9,12 +10,13 @@ import { Message } from '../../models/message.model';
 export class MessageEditComponent {
   @ViewChild('subject') subjectInput!: ElementRef;
   @ViewChild('msgText') msgTextInput!: ElementRef;
-  @Output() addMessageEvent = new EventEmitter<Message>();
 
   currentSender: string = 'YourName';
 
+  constructor(private messageService: MessageService) {}
+
   onSendMessage(event: Event) {
-    event.preventDefault(); // Prevent default form submission behavior
+    event.preventDefault();
 
     const subject = this.subjectInput.nativeElement.value;
     const msgText = this.msgTextInput.nativeElement.value;
@@ -22,14 +24,15 @@ export class MessageEditComponent {
     if (!subject || !msgText) return;
 
     const newMessage = new Message(
-      'id-' + Math.random(), // Unique ID
+      'id-' + Math.random(),
       subject,
       msgText,
       this.currentSender
     );
 
-    this.addMessageEvent.emit(newMessage);
-    this.onClear(); // Clear the inputs after sending
+
+    this.messageService.addMessage(newMessage);
+    this.onClear();
   }
 
   onClear() {

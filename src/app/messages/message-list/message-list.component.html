@@ -9,14 +9,14 @@
       <div class="panel-body">
         <div class="row">
           <div class="col-xs-12">
-            <!--Add tag to load the MessageItemComponent-->
+            <!-- Load each MessageItemComponent for every message -->
             <app-message-item *ngFor="let message of messages" [message]="message"></app-message-item>
           </div>
         </div>
       </div>
       <div class="panel-footer">
-        <!--Add tag to load the MessageEditComponent-->
-        <app-message-edit (addMessageEvent)="onAddMessage($event)"></app-message-edit>
+        <!-- Load the MessageEditComponent without any output binding -->
+        <app-message-edit></app-message-edit>
       </div>
     </div>
   </div>
