@@ -11,6 +11,7 @@ export class DocumentService {
 
   // EventEmitter for cross-component communication (e.g., notifying when a document is selected)
   documentSelectedEvent: EventEmitter<Document> = new EventEmitter<Document>();
+  documentChangedEvent = new EventEmitter<Document[]>();
 
   constructor() {
     // Initialize the documents array with the predefined mock documents
@@ -26,5 +27,18 @@ export class DocumentService {
   // If no matching document is found, returns null.
   getDocument(id: string): Document {
     return this.documents.find(doc => doc.id === id) || null;
+  }
+
+  deleteDocument(document: Document): void {
+    if (!document) {
+      return;
+    }
+    const pos = this.documents.indexOf(document);
+    if (pos < 0) {
+      return;
+    }
+    this.documents.splice(pos, 1);
+    // Emit a new copy of the documents array
+    this.documentChangedEvent.emit(this.documents.slice());
   }
 }

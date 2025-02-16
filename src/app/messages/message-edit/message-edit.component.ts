@@ -13,7 +13,7 @@ export class MessageEditComponent {
 
   currentSender: string = 'YourName';
 
-  constructor(private messageService: MessageService) {}
+  constructor(private messageService: MessageService) { }
 
   onSendMessage(event: Event) {
     event.preventDefault();

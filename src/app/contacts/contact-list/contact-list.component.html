@@ -6,7 +6,8 @@
         <h2 class="panel-title" style="font-size: 24px; font-weight: bold; margin: 0;">Contacts</h2>
       </div>
       <div class="col-xs-4 text-right">
-        <button class="btn btn-success">New Contact</button>
+        <!-- The New Contact button now navigates to the 'new' route -->
+        <button class="btn btn-success" [routerLink]="['new']">New Contact</button>
       </div>
     </div>
   </div>
@@ -14,12 +15,13 @@
   <!-- Panel Body -->
   <div class="panel-body">
     <div class="list-group">
-      <a href="#" class="list-group-item clearfix" *ngFor="let contact of contacts" (click)="onSelectContact(contact)">
+      <a class="list-group-item clearfix" *ngFor="let contact of contacts" [routerLink]="['/contacts', contact.id]"
+        routerLinkActive="active">
         <div class="pull-left">
           <h4 class="list-group-item-heading">{{ contact?.name }}</h4>
         </div>
         <span class="pull-right">
-          <img [src]="contact.imageUrl" [alt]="contact.name" class="img-responsive" style="max-height: 50px" />
+          <img [src]="contact?.imageUrl" [alt]="contact?.name" class="img-responsive" style="max-height: 50px" />
         </span>
       </a>
     </div>
