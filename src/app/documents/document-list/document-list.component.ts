@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Document } from '../../models/document.model';
 import { DocumentService } from '../services/document-service.service';
@@ -12,7 +12,8 @@ export class DocumentListComponent implements OnInit, OnDestroy {
   documents: Document[] = [];
   subscription: Subscription;
 
-  constructor(private documentService: DocumentService) { }
+  constructor(private documentService: DocumentService,
+    private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     // Initialize the documents array
@@ -21,7 +22,10 @@ export class DocumentListComponent implements OnInit, OnDestroy {
     // Subscribe to changes in the document list using the Subject
     this.subscription = this.documentService.documentListChangedEvent.subscribe(
       (documents: Document[]) => {
+        console.log('EVENT', documents);
         this.documents = documents;
+        // Force Angular to check for changes and update the UI
+        this.cdr.detectChanges();
       }
     );
   }

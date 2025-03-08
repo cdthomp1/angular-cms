@@ -1,7 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Subject } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Contact } from '../../models/contact.model';
-import { MOCKCONTACTS } from './MOCKCONTACTS';
 
 @Injectable({
   providedIn: 'root'
@@ -16,13 +16,25 @@ export class ContactsService {
   // Keeps track of the maximum contact id to generate unique ids for new contacts
   maxContactId: number;
 
-  constructor() {
-    this.contacts = MOCKCONTACTS;
+  // Firebase URL for contacts – update this with your actual Firebase URL
+  private contactsUrl: string = 'https://angular-cms-7dba6-default-rtdb.firebaseio.com/contacts.json';
+
+  constructor(private http: HttpClient) {
     this.maxContactId = this.getMaxId();
   }
 
-  // Returns a copy of the contacts array to avoid direct mutation
+  // Retrieves contacts from Firebase via HTTP GET
   getContacts(): Contact[] {
+    this.http.get<Contact[]>(this.contactsUrl).subscribe(
+      (contacts: Contact[]) => {
+        this.contacts = contacts ? contacts : [];
+        this.maxContactId = this.getMaxId();
+        this.contactListChangedEvent.next(this.contacts.slice());
+      },
+      (error: any) => {
+        console.error('Error fetching contacts:', error);
+      }
+    );
     return this.contacts.slice();
   }
 
@@ -43,7 +55,21 @@ export class ContactsService {
     return maxId;
   }
 
-  // Adds a new contact, assigns a unique id, and emits the updated list
+  // Persists the contacts array to Firebase via HTTP PUT
+  storeContacts(): void {
+    const contactsString = JSON.stringify(this.contacts);
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    this.http.put(this.contactsUrl, contactsString, { headers: headers }).subscribe(
+      () => {
+        this.contactListChangedEvent.next(this.contacts.slice());
+      },
+      (error: any) => {
+        console.error('Error storing contacts:', error);
+      }
+    );
+  }
+
+  // Adds a new contact, assigns a unique id, and persists the updated list
   addContact(newContact: Contact): void {
     if (!newContact) {
       return;
@@ -51,10 +77,10 @@ export class ContactsService {
     this.maxContactId++;
     newContact.id = this.maxContactId.toString();
     this.contacts.push(newContact);
-    this.contactListChangedEvent.next(this.contacts.slice());
+    this.storeContacts();
   }
 
-  // Updates an existing contact and emits the updated list
+  // Updates an existing contact and persists the updated list
   updateContact(originalContact: Contact, newContact: Contact): void {
     if (!originalContact || !newContact) {
       return;
@@ -63,13 +89,12 @@ export class ContactsService {
     if (pos < 0) {
       return;
     }
-    // Preserve the original contact's id
-    newContact.id = originalContact.id;
+    newContact.id = originalContact.id; // Preserve original id
     this.contacts[pos] = newContact;
-    this.contactListChangedEvent.next(this.contacts.slice());
+    this.storeContacts();
   }
 
-  // Deletes a contact and emits the updated list
+  // Deletes a contact and persists the updated list
   deleteContact(contact: Contact): void {
     if (!contact) {
       return;
@@ -79,6 +104,6 @@ export class ContactsService {
       return;
     }
     this.contacts.splice(pos, 1);
-    this.contactListChangedEvent.next(this.contacts.slice());
+    this.storeContacts();
   }
 }

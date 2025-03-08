@@ -4,7 +4,13 @@
     <div class="row" style="display: flex; align-items: center;">
       <div class="col-xs-8">
         <h2 class="panel-title" style="font-size: 24px; font-weight: bold; margin: 0;">Contacts</h2>
+        <div class="input-group pull-left pad-left-right col-xs-7">
+          <input type="text" #searchBox class="form-control" placeholder="Enter a search value"
+            (keyup)="search(searchBox.value)">
+          <div class="glyphicon glyphicon-search input-group-addon" (click)="search(searchBox.value)"></div>
+        </div>
       </div>
+
       <div class="col-xs-4 text-right">
         <!-- The New Contact button now navigates to the 'new' route -->
         <button class="btn btn-success" [routerLink]="['new']">New Contact</button>
@@ -14,8 +20,8 @@
 
   <div class="panel-body">
     <div class="list-group">
-      <a class="list-group-item clearfix" *ngFor="let contact of contacts" [routerLink]="['/contacts', contact.id]"
-        routerLinkActive="active">
+      <a class="list-group-item clearfix" *ngFor="let contact of contacts | contactsFilter: term"
+        [routerLink]="['/contacts', contact.id]" routerLinkActive="active">
         <span>
           <div cdkDrag [cdkDragData]="contact">
             <app-contact-item [contact]="contact" class="img-responsive" style="max-height: 50px;"></app-contact-item>

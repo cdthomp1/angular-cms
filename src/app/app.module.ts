@@ -20,6 +20,8 @@ import { DropdownDirective } from './shared/dropdown.directive';
 import { DocumentEditComponent } from './documents/document-edit/document-edit.component';
 import { ContactEditComponent } from './contacts/contact-edit/contact-edit.component';
 import { ContactItemComponent } from './contact-item/contact-item.component';
+import { ContactsFilterPipe } from './contacts-filter.pipe';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -38,13 +40,15 @@ import { ContactItemComponent } from './contact-item/contact-item.component';
     DropdownDirective,
     DocumentEditComponent,
     ContactEditComponent,
-    ContactItemComponent
+    ContactItemComponent,
+    ContactsFilterPipe
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    DragDropModule
+    DragDropModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
