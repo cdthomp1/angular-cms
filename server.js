@@ -5,6 +5,7 @@ var http = require('http');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var mongoose = require('mongoose'); // Added for MongoDB connection
 
 // import the routing file to handle the default (index) route
 var index = require('./server/routes/app');
@@ -38,8 +39,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Tell express to use the specified director as the
-// root directory for your web site
+
 app.use(express.static(path.join(__dirname, 'dist/angular-cms/browser')));
 
 // Tell express to map the default route ('/') to the index route
@@ -48,6 +48,15 @@ app.use('/', index);
 app.use('/documents', documents);
 app.use('/messages', messages);
 app.use('/contacts', contacts);
+
+
+mongoose.connect('mongodb://localhost:27017/angular-cms', { useNewUrlParser: true })
+  .then(() => {
+    console.log('Connected to database!');
+  })
+  .catch((err) => {
+    console.log('Connection failed: ' + err);
+  });
 
 // Tell express to map all other non-defined routes back to the index page
 app.get('*', (req, res) => {
@@ -63,5 +72,5 @@ const server = http.createServer(app);
 
 // Tell the server to start listening on the provided port
 server.listen(port, function () {
-  console.log('API running on localhost: ' + port)
+  console.log('API running on localhost: ' + port);
 });

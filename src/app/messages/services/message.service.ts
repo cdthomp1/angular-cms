@@ -11,8 +11,8 @@ export class MessageService {
 
   messageChangedEvent: EventEmitter<Message[]> = new EventEmitter<Message[]>();
 
-  // Firebase URL for messages – update with your actual Firebase URL
-  private messagesUrl: string = 'https://angular-cms-7dba6-default-rtdb.firebaseio.com/messages.json';
+  // NodeJS backend URL for messages
+  private messagesUrl: string = 'http://localhost:3000/messages';
 
   constructor(private http: HttpClient) {
     this.maxMessageId = this.getMaxId();
@@ -30,11 +30,11 @@ export class MessageService {
     return maxId;
   }
 
-  // Retrieves messages from Firebase via HTTP GET
+
   getMessages(): Message[] {
-    this.http.get<Message[]>(this.messagesUrl).subscribe(
-      (messages: Message[]) => {
-        this.messages = messages ? messages : [];
+    this.http.get<{ message: string, messages: Message[] }>(this.messagesUrl).subscribe(
+      (response) => {
+        this.messages = response.messages ? response.messages : [];
         this.maxMessageId = this.getMaxId();
         this.messageChangedEvent.emit(this.messages.slice());
       },
@@ -45,12 +45,12 @@ export class MessageService {
     return this.messages.slice();
   }
 
-  // Returns a specific message based on its id; returns null if not found
+
   getMessage(id: string): Message {
     return this.messages.find(msg => msg.id === id) || null;
   }
 
-  // Persists the messages array to Firebase via HTTP PUT
+
   storeMessages(): void {
     const messagesString = JSON.stringify(this.messages);
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
@@ -64,14 +64,23 @@ export class MessageService {
     );
   }
 
-  // Adds a new message, assigns a unique id, and persists the updated list
+
   addMessage(message: Message): void {
     if (!message) {
       return;
     }
-    this.maxMessageId++;
-    message.id = this.maxMessageId.toString();
-    this.messages.push(message);
-    this.storeMessages();
+
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    this.http.post<{ message: string, messageData: Message }>(this.messagesUrl, message, { headers: headers })
+      .subscribe(
+        (response) => {
+          this.messages.push(response.messageData);
+          this.maxMessageId = this.getMaxId();
+          this.messageChangedEvent.emit(this.messages.slice());
+        },
+        (error: any) => {
+          console.error('Error adding message:', error);
+        }
+      );
   }
 }
